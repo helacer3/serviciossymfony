@@ -1,0 +1,22 @@
+{
+  "name": "soapsymfony",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/helacer3/serviciossymfony.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/helacer3/serviciossymfony/issues"
+  },
+  "homepage": "https://github.com/helacer3/serviciossymfony#readme"
+}

@@ -18,9 +18,9 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\User;
 
 /**
- * Clase con la información de la billetera
+ * Clase con la información de la Orden
  * @author Snayder Acero
- * @ORM\Table(name="prb_wallet")
+ * @ORM\Table(name="prb_order")
  * @ORM\Entity
  */
 class Order
@@ -39,29 +39,61 @@ class Order
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumn(name="IdUser", referencedColumnName="IdUser")
      **/
-    protected $idUser;
+    protected User $idUser;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="IdProduct", type="int", nullable=false)
+     * @ORM\Column(name="IdProduct", type="string", nullable=false)
      */
-    protected $idProduct;
+    protected string $idProduct;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="IdSession", type="string", nullable=false)
+     */
+    protected string $idSession;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="Token", type="string", nullable=false)
+     */
+    protected string $token;
 
     /**
      * @var float
      *
      * @ORM\Column(name="Value", type="float", nullable=false)
      */
-    protected $value;
-   
+    protected float $value;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="Status", type="string", nullable=false)
+     */
+    protected string $status;
 
     /**
      * @return int
      */
-    public function getId()
+    public function getId():int
     {
         return $this->id;
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return self
+     */
+    public function setId(int $id)
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     /**
@@ -85,9 +117,69 @@ class Order
     }
 
     /**
+     * @return int
+     */
+    public function getIdProduct():string
+    {
+        return $this->idProduct;
+    }
+
+    /**
+     * @param int $idProduct
+     *
+     * @return self
+     */
+    public function setIdProduct(string $idProduct)
+    {
+        $this->idProduct = $idProduct;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdSession(): string
+    {
+        return $this->idSession;
+    }
+
+    /**
+     * @param string $idSession
+     *
+     * @return self
+     */
+    public function setIdSession(string $idSession)
+    {
+        $this->idSession = $idSession;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getToken(): string
+    {
+        return $this->token;
+    }
+
+    /**
+     * @param string $token
+     *
+     * @return self
+     */
+    public function setToken(string $token)
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
+    /**
      * @return float
      */
-    public function getValue():float
+    public function getValue(): float
     {
         return $this->value;
     }
@@ -105,21 +197,21 @@ class Order
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getIdProduct():int
+    public function getStatus():string
     {
-        return $this->idProduct;
+        return $this->status;
     }
 
     /**
-     * @param int $idProduct
+     * @param string $status
      *
      * @return self
      */
-    public function setIdProduct(int $idProduct)
+    public function setStatus(string $status)
     {
-        $this->idProduct = $idProduct;
+        $this->status = $status;
 
         return $this;
     }

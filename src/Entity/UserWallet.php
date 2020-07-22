@@ -23,7 +23,7 @@ use App\Entity\User;
  * @ORM\Table(name="prb_wallet")
  * @ORM\Entity
  */
-class Wallet
+class UserWallet
 {
     /**
      * @var int

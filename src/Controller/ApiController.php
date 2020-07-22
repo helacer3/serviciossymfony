@@ -2,15 +2,13 @@
 namespace App\Controller;
 
 use App\Controller\Base\BaseController;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 // services
 use App\Service\UserService;
 use App\Service\WalletService;
 use App\Service\ProductService;
-// entities
-use App\Entity\User;
 
 /**
  * Controlador para la API
@@ -36,10 +34,10 @@ class ApiController extends BaseController
         try {
             // request Data
             $arrData = array(
-                $request->request->get->("usrName"),
-                $request->request->get->("usrEmail"),
-                $request->request->get->("usrDocument"),
-                $request->request->get->("usrPhone"),
+                "usrName"     => $request->request->get("usrName"),
+                "usrEmail"    => $request->request->get("usrEmail"),
+                "usrDocument" => $request->request->get("usrDocument"),
+                "usrPhone"    => $request->request->get("usrPhone"),
             );
             // save User Info
             if ($userService->saveUser($arrData)) {
@@ -64,9 +62,9 @@ class ApiController extends BaseController
         try {
             // request Data
             $arrData = array(
-                $request->request->get->("usrDocument"),
-                $request->request->get->("usrPhone"),
-                $request->request->get->("usrValue"),
+                "usrDocument" => $request->request->get("usrDocument"),
+                "usrPhone"    => $request->request->get("usrPhone"),
+                "usrValue"    => $request->request->get("usrValue"),
             );
             // charge User Wallet
             if ($walletService->chargeUserWallet($arrData)) {
@@ -84,21 +82,27 @@ class ApiController extends BaseController
     /**
     * @Route("/buyProduct", name="buy_product", methods={"POST"})
     */
-    public function buyProduct(Request $request, ProductService $productService)
+    public function buyProduct(Request $request, WalletService $walletService, ProductService $productService)
     {   
         // default Vars
         $jsnResponse = $this->errorResponse(array('message' => 'No fué posible generar la compra'));
         try {
             // request Data
             $arrData = array(
-                $request->request->get->("usrDocument"),
-                $request->request->get->("usrProduct"),
-                $request->request->get->("usrValue")
+                "usrDocument" => $request->request->get("usrDocument"),
+                "usrProduct"  => $request->request->get("usrProduct"),
+                "usrValue"    => $request->request->get("usrValue"),
+                "usrSession"  => $request->request->get("usrSession"),
             );
-            // buy User Product
-            if ($walletService->buyUserProduct($arrData)) {
-                // success Response
-                $jsnResponse = $this->successResponse($arrData);
+            // Actual User Wallet Amount
+            $amtWallet = $walletService->userWalletAmount($request->request->get("usrDocument"));
+            // validate Amount Wallet
+            if ((float)$amtWallet >= (float)$request->request->get("usrValue")) { 
+                // buy User Product
+                if ($productService->buyUserProduct($arrData)) {
+                    // success Response
+                    $jsnResponse = $this->successResponse($arrData);
+                }
             }
         } catch (\Exception $ex) {
             // set Json Response - For Debug
@@ -118,8 +122,8 @@ class ApiController extends BaseController
         try {
             // request Data
             $arrData = array(
-                $request->request->get->("usrSession"),
-                $request->request->get->("usrToken")
+                $request->request->get("usrSession"),
+                $request->request->get("usrToken")
             );
             // buy User Product
             if ($walletService->buyUserProductConfirm($arrData)) {
@@ -135,23 +139,19 @@ class ApiController extends BaseController
     }
 
     /**
-    * @Route("/checkBalance", name="check_balance")
+    * @Route("/checkBalance", name="check_balance", methods={"POST"})
     */
     public function checkBalance(Request $request, WalletService $walletService)
     {   
         // default Vars
         $jsnResponse = $this->errorResponse(array('message' => 'No fué posible consultar su saldo'));
         try {
-            // request Data
-            $arrData = array(
-                $request->request->get->("usrDocument"),
-                $request->request->get->("usrPhone")
-            );
             // buy User Product
-            if ($walletService->walletUserBalance($arrData)) {
-                // success Response
-                $jsnResponse = $this->successResponse($arrData);
-            }
+            $wltAmount = $walletService->userWalletAmount(
+                $request->request->get("usrDocument"), $request->request->get("usrPhone")
+            );
+            // success Response
+            $jsnResponse = $this->successResponse(array('amount' => $wltAmount));
         } catch (\Exception $ex) {
             // set Json Response - For Debug
             $jsnResponse = $this->errorResponse(array('message' => $ex->getMessage()));
