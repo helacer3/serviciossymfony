@@ -20,7 +20,7 @@ abstract class BaseController extends AbstractController
      * @param  array $arrayData
      * @return JSON
      */
-    protected function errorResponse($arrayData = array())
+    protected function errorResponse($arrayData = array()): JsonResponse
     {
         $arrayResponse = array(
             "result" => false,
@@ -34,7 +34,7 @@ abstract class BaseController extends AbstractController
      * @param  array $arrayData
      * @return JSON
      */
-    protected function successResponse($arrayData = array())
+    protected function successResponse($arrayData = array()): JsonResponse
     {
         $arrayResponse = array(
             "result" => true,

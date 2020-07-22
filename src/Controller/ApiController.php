@@ -4,103 +4,159 @@ namespace App\Controller;
 use App\Controller\Base\BaseController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 // services
 use App\Service\UserService;
+use App\Service\WalletService;
+use App\Service\ProductService;
 // entities
 use App\Entity\User;
 
 /**
  * Controlador para la API
+ * @Route("/api")
  * @author Snayder Acero
  */
 class ApiController extends BaseController
 {
-    // class Vars
-    protected $projectDir;
-    
     /*
     * _construct
     */
-    public function __construct(KernelInterface $kernel)
+    public function __construct()
     {
-        $this->projectDir = $kernel->getProjectDir();
     }
 
     /**
-    * @Route("/generateWsdl", name="generate_wsdl")
-    */
-    public function generateWsdl()
-    {
-        $class = new UserService();
-        $serviceURI = "http://www.myservice.com/registerUser";
-        $wsdlGenerator = new \PHP2WSDL\PHPClass2WSDL($class, $serviceURI);
-        // Generate the WSDL from the class adding only the public methods that have @soap annotation.
-        $wsdlGenerator->generateWSDL(true);
-        // Dump as string
-        //$wsdlXML = $wsdlGenerator->dump();
-        // Or save as file
-        $wsdlXML = $wsdlGenerator->save($this->projectDir.'/src/Wsdl/soapsymfony.wsdl');
-        die("generado");
-    }
-
-    /**
-    * @Route("/testSoap", name="test_soap")
-    */
-    public function testSoap()
-    {
-        $soapClient = new \SoapClient('http://localhost/soapSymfony/public/registerUser?wsdl');
-        $result = $soapClient->__soapCall("hello", array('name'=>'Jose'));
-        dd($result);
-    }
-
-    /**
-    * @Route("/registerUser", name="register_user")
+    * @Route("/registerUser", name="register_user", methods={"POST"})
     */  
-    public function registerUser(UserService $userService)
-    {
-        $soapServer = new \SoapServer($this->projectDir.'/src/Wsdl/soapsymfony.wsdl');
-        $soapServer->setObject($userService);
-
-        $response = new Response();
-        $response->headers->set('Content-Type', 'text/xml; charset=ISO-8859-1');
-
-        ob_start();
-        $soapServer->handle();
-        $response->setContent(ob_get_clean());
-
-        return $response;
+    public function registerUser(Request $request, UserService $userService): JsonResponse
+    {   
+        // default Vars
+        $jsnResponse = $this->errorResponse(array('message' => 'No fué posible guardar el usuario'));
+        try {
+            // request Data
+            $arrData = array(
+                $request->request->get->("usrName"),
+                $request->request->get->("usrEmail"),
+                $request->request->get->("usrDocument"),
+                $request->request->get->("usrPhone"),
+            );
+            // save User Info
+            if ($userService->saveUser($arrData)) {
+                // success Response
+                $jsnResponse = $this->successResponse($arrData);
+            }
+        } catch (\Exception $ex) {
+            // set Json Response - For Debug
+            $jsnResponse = $this->errorResponse(array('message' => $ex->getMessage()));
+        }
+        // default Return
+        return $jsnResponse;
     }
 
     /**
-    * @Route("/rechargeWallet", name="recharge_wallet")
+    * @Route("/rechargeWallet", name="recharge_wallet", methods={"POST"})
     */
-    public function rechargeWallet()
-    {
-        die("aa2");
+    public function rechargeWallet(Request $request, WalletService $walletService)
+    {   
+        // default Vars
+        $jsnResponse = $this->errorResponse(array('message' => 'No fué posible cargar la billetera'));
+        try {
+            // request Data
+            $arrData = array(
+                $request->request->get->("usrDocument"),
+                $request->request->get->("usrPhone"),
+                $request->request->get->("usrValue"),
+            );
+            // charge User Wallet
+            if ($walletService->chargeUserWallet($arrData)) {
+                // success Response
+                $jsnResponse = $this->successResponse($arrData);
+            }
+        } catch (\Exception $ex) {
+            // set Json Response - For Debug
+            $jsnResponse = $this->errorResponse(array('message' => $ex->getMessage()));
+        }
+        // default Return
+        return $jsnResponse;
     }
 
     /**
-    * @Route("/buyProduct", name="buy_product")
+    * @Route("/buyProduct", name="buy_product", methods={"POST"})
     */
-    public function buyProduct()
-    {
-        die("aa3");
+    public function buyProduct(Request $request, ProductService $productService)
+    {   
+        // default Vars
+        $jsnResponse = $this->errorResponse(array('message' => 'No fué posible generar la compra'));
+        try {
+            // request Data
+            $arrData = array(
+                $request->request->get->("usrDocument"),
+                $request->request->get->("usrProduct"),
+                $request->request->get->("usrValue")
+            );
+            // buy User Product
+            if ($walletService->buyUserProduct($arrData)) {
+                // success Response
+                $jsnResponse = $this->successResponse($arrData);
+            }
+        } catch (\Exception $ex) {
+            // set Json Response - For Debug
+            $jsnResponse = $this->errorResponse(array('message' => $ex->getMessage()));
+        }
+        // default Return
+        return $jsnResponse;
     }
 
     /**
-    * @Route("/buyConfirm", name="buy_confirm")
+    * @Route("/buyConfirm", name="buy_confirm", methods={"POST"})
     */
-    public function buyConfirm()
+    public function buyConfirm(Request $request, ProductService $productService)
     {
-        die("aa4");
+        // default Vars
+        $jsnResponse = $this->errorResponse(array('message' => 'No fué posible confirmar la compra'));
+        try {
+            // request Data
+            $arrData = array(
+                $request->request->get->("usrSession"),
+                $request->request->get->("usrToken")
+            );
+            // buy User Product
+            if ($walletService->buyUserProductConfirm($arrData)) {
+                // success Response
+                $jsnResponse = $this->successResponse($arrData);
+            }
+        } catch (\Exception $ex) {
+            // set Json Response - For Debug
+            $jsnResponse = $this->errorResponse(array('message' => $ex->getMessage()));
+        }
+        // default Return
+        return $jsnResponse;
     }
 
     /**
     * @Route("/checkBalance", name="check_balance")
     */
-    public function checkBalance()
-    {
-        die("aa5");
+    public function checkBalance(Request $request, WalletService $walletService)
+    {   
+        // default Vars
+        $jsnResponse = $this->errorResponse(array('message' => 'No fué posible consultar su saldo'));
+        try {
+            // request Data
+            $arrData = array(
+                $request->request->get->("usrDocument"),
+                $request->request->get->("usrPhone")
+            );
+            // buy User Product
+            if ($walletService->walletUserBalance($arrData)) {
+                // success Response
+                $jsnResponse = $this->successResponse($arrData);
+            }
+        } catch (\Exception $ex) {
+            // set Json Response - For Debug
+            $jsnResponse = $this->errorResponse(array('message' => $ex->getMessage()));
+        }
+        // default Return
+        return $jsnResponse;
     }
 }
