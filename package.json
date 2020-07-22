@@ -1,5 +1,5 @@
 {
-  "name": "soapsymfony",
+  "name": "testsymfony",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -18,5 +18,12 @@
   "bugs": {
     "url": "https://github.com/helacer3/serviciossymfony/issues"
   },
-  "homepage": "https://github.com/helacer3/serviciossymfony#readme"
+  "homepage": "https://github.com/helacer3/serviciossymfony#readme",
+  "devDependencies": {
+    "@symfony/webpack-encore": "^0.30.2",
+    "vue": "2.5",
+    "vue-loader": "15",
+    "vue-template-compiler": "^2.6.11",
+    "webpack-notifier": "1.6.0"
+  }
 }
