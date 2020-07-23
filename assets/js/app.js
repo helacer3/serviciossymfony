@@ -1,9 +1,13 @@
-import Vue from 'vue';
-import App from './components/App';
+import Vue    from 'vue';
+import Users  from './components/Users';
+import Wallet from './components/Wallet';
+import axios  from 'axios';
 import '../css/app.css';
-import axios from 'axios';
 
-new Vue({
-    el: '#appServices',
-    render: h => h(App)
-});
+window.onload = function () {
+	new Vue({
+	    el: '#appService',
+	    //render: h => h(Users)
+	    components: {Users, Wallet}
+	});
+}

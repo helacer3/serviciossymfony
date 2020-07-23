@@ -21,9 +21,12 @@
   "homepage": "https://github.com/helacer3/serviciossymfony#readme",
   "devDependencies": {
     "@symfony/webpack-encore": "^0.30.2",
-    "vue": "2.5",
+    "vue": "2.6",
     "vue-loader": "15",
     "vue-template-compiler": "^2.6.11",
     "webpack-notifier": "1.6.0"
+  },
+  "dependencies": {
+    "axios": "^0.19.2"
   }
 }

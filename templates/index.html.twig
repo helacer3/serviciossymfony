@@ -2,30 +2,9 @@
 
 {% block content %}
     {% block body %}
-	<div id="appServices" class="container-fluid">
-		<app inline-template>
-			<div class="row">
-				<div class="col-6">
-					<label>Usuario</label>
-					<input type="text" name="usrName" v-model="usrName" placeholder="Nombre del Usuario" value="">
-				</div>
-				<div class="col-6">
-					<label>Documento</label>
-					<input type="text" name="usrDocument" v-model="usrDocument" placeholder="Documento del Usuario" value="">
-				</div>
-				<div class="col-6">
-					<label>Correo Electrónico</label>
-					<input type="email" name="usrEmail" v-model="usrEmail" placeholder="Correo del Usuario" value="">
-				</div>
-				<div class="col-6">
-					<label>Teléfono</label>
-					<input type="text" name="usrPhone" v-model="usrPhone" placeholder="Teléfono del Usuario" value="">
-				</div>
-				<div class="col-12 text-center">
-					<button v-on:click="saveUser">Crear Cliente</button>
-				</div>
-			</div>
-		</app>
+	<div id="appService" class="container-fluid">
+		<users></users>
+		<wallet></wallet>
 	</div>
     {% endblock %}
 {% endblock %}

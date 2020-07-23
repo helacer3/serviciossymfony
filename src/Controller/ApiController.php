@@ -32,12 +32,16 @@ class ApiController extends BaseController
         // default Vars
         $jsnResponse = $this->errorResponse(array('message' => 'No fué posible guardar el usuario'));
         try {
+            // get Content
+            $data    = $request->getContent();
+            // json Decode
+            $data    = json_decode($data);
             // request Data
             $arrData = array(
-                "usrName"     => $request->request->get("usrName"),
-                "usrEmail"    => $request->request->get("usrEmail"),
-                "usrDocument" => $request->request->get("usrDocument"),
-                "usrPhone"    => $request->request->get("usrPhone"),
+                "usrName"     => $data->params->usrName,//$request->request->get("usrName"),
+                "usrEmail"    => $data->params->usrEmail,//$request->request->get("usrEmail"),
+                "usrDocument" => $data->params->usrDocument,//$request->request->get("usrDocument"),
+                "usrPhone"    => $data->params->usrPhone//$request->request->get("usrPhone"),
             );
             // save User Info
             if ($userService->saveUser($arrData)) {
@@ -60,11 +64,15 @@ class ApiController extends BaseController
         // default Vars
         $jsnResponse = $this->errorResponse(array('message' => 'No fué posible cargar la billetera'));
         try {
+            // get Content
+            $data    = $request->getContent();
+            // json Decode
+            $data    = json_decode($data);
             // request Data
             $arrData = array(
-                "usrDocument" => $request->request->get("usrDocument"),
-                "usrPhone"    => $request->request->get("usrPhone"),
-                "usrValue"    => $request->request->get("usrValue"),
+                "usrDocument" => $data->params->usrDocument,//$request->request->get("usrDocument"),
+                "usrPhone"    => $data->params->usrPhone,//$request->request->get("usrPhone"),
+                "usrValue"    => $data->params->usrValue,//$request->request->get("usrValue"),
             );
             // charge User Wallet
             if ($walletService->chargeUserWallet($arrData)) {
